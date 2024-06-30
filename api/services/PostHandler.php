@@ -18,37 +18,6 @@ class PostHandler extends GlobalUtil
 
     }
 
-    private function uploadImage($file)
-    {
-        $targetDir = __DIR__ . '/../uploads/';
-        $targetFile = $targetDir . basename($file['name']);
-        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-        $validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-
-        // Check if file is an actual image
-        $check = getimagesize($file['tmp_name']);
-        if ($check === false) {
-            return $this->sendErrorResponse("File is not an image.", 400);
-        }
-
-        // Check file size (limit to 5MB)
-        if ($file['size'] > 5000000) {
-            return $this->sendErrorResponse("Sorry, your file is too large.", 400);
-        }
-
-        // Allow certain file formats
-        if (!in_array($imageFileType, $validExtensions)) {
-            return $this->sendErrorResponse("Sorry, only JPG, JPEG, PNG & GIF files are allowed.", 400);
-        }
-
-        // Move the file to the target directory
-        if (move_uploaded_file($file['tmp_name'], $targetFile)) {
-            return basename($file['name']);
-        } else {
-            return $this->sendErrorResponse("Sorry, there was an error uploading your file.", 500);
-        }
-    }
-
     public function createPost() {
         $data = json_decode(file_get_contents("php://input"));
         
