@@ -128,6 +128,13 @@
                                         http_response_code(400); // Bad request status code
                                     }
                                     break;
+                                    case 'users':
+                                        if (count($request) > 1) {
+                                            echo json_encode($usermanage->getUsers($request[1])); // Corrected $user to $usermanage
+                                        } else {
+                                            echo json_encode($usermanage->getUsers()); // Corrected $user to $usermanage
+                                        }
+                                        break;
                                 default:
                                     echo "Method not available";
                                     http_response_code(404);

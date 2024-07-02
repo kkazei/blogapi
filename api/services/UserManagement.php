@@ -63,6 +63,33 @@ class UserManagement extends GlobalUtil
             return $this->sendErrorResponse("Failed to update: " . $errmsg, 400);
         }
     }
+
+
+    public function getUsers() {
+        $tableName = 'users';
+        $userRole = 'users'; // Define the user role to filter
+        
+        // Construct SQL SELECT statement with WHERE clause
+        $sql = "SELECT * FROM $tableName WHERE user_role = :userRole";
+        
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute(['userRole' => $userRole]);
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Check if there are users found
+            if ($users) {
+                return $this->sendResponse($users, 200);
+            } else {
+                return $this->sendErrorResponse("No users found with role '$userRole'", 404);
+            }
+        } catch (\PDOException $e) {
+            $errmsg = $e->getMessage();
+            error_log("Failed to fetch users: " . $errmsg); // Add logging here
+            return $this->sendErrorResponse("Failed to fetch users: " . $errmsg, 500);
+        }
+    }
+    
     
 }
    
