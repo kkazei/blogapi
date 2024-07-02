@@ -24,6 +24,7 @@ class PostHandler extends GlobalUtil
         // Extract the data from the incoming JSON
         $title = $data->title ?? '';
         $content = $data->content ?? '';
+        $tags = $data->tags ?? '';
         $author_id = $data->author_id;
 
         // Validate if necessary
@@ -46,6 +47,7 @@ class PostHandler extends GlobalUtil
         $query = "INSERT INTO " . $table_name . "
                     SET title = :title,
                         content = :content,
+                        tags = :tags,
                         author_id = :author_id,
                         author_role = :author_role,
                         created_at = :created_at";
@@ -55,6 +57,7 @@ class PostHandler extends GlobalUtil
         // Bind the parameters
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
+        $stmt->bindParam(':tags', $tags); // Bind tags to the incoming JSON string
         $stmt->bindParam(':author_id', $author_id);
         $stmt->bindParam(':author_role', $authorRole); // Bind author_role to 'user'
         
@@ -79,6 +82,7 @@ class PostHandler extends GlobalUtil
         // Extract the data from the incoming JSON
         $title = $data->title ?? '';
         $content = $data->content ?? '';
+        $tags = $data->tags?? '';
         $author_id = $data->author_id;
 
          // Validate if necessary
@@ -109,6 +113,7 @@ class PostHandler extends GlobalUtil
         $query = "INSERT INTO " . $table_name . "
                     SET title = :title,
                         content = :content,
+                        tags = :tags,
                         author_id = :author_id,
                         author_role = :author_role,
                         created_at = :created_at";
@@ -118,6 +123,7 @@ class PostHandler extends GlobalUtil
         // Bind the parameters
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
+        $stmt->bindParam(':tags', $tags); // Bind tags to the incoming JSON string
         $stmt->bindParam(':author_id', $author_id);
         $stmt->bindParam(':author_role', $authorRole); // Bind author_role to 'admin'
     
@@ -165,12 +171,13 @@ class PostHandler extends GlobalUtil
 
     public function updatePost($postId, $data)
     {
-        $sql = "UPDATE posts SET title = :title, content = :content, edited_at = current_timestamp() WHERE id = :id";
+        $sql = "UPDATE posts SET title = :title, content = :content, tags = :tags, edited_at = current_timestamp() WHERE id = :id";
         
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':title', $data->title);
             $stmt->bindParam(':content', $data->content);
+            $stmt->bindParam(':tags', $data->tags); // Bind tags to the incoming JSON string
             $stmt->bindParam(':id', $postId);
             $stmt->execute();
             
@@ -197,6 +204,7 @@ class PostHandler extends GlobalUtil
                         p.id, 
                         p.title, 
                         p.content, 
+                        p.tags,
                         p.author_id, 
                         u.user_firstname, 
                         u.user_lastname, 
@@ -294,27 +302,6 @@ class PostHandler extends GlobalUtil
             return $this->sendErrorResponse("Failed to add comment: " . $errmsg, 500);
         }
     }
-    
-    
-
-
-    public function deleteComment($commentId)
-    {
-        try {
-            $sql = "DELETE FROM comments WHERE comment_id = ?";
-            $stmt = $this->pdo->prepare($sql);
-            if ($stmt->execute([$commentId])) {
-                return $this->sendResponse("Comment deleted successfully", 200);
-            } else {
-                return $this->sendErrorResponse("Failed to delete comment", 400);
-            }
-        } catch (\PDOException $e) {
-            $errmsg = $e->getMessage();
-            return $this->sendErrorResponse("Failed to delete comment: " . $errmsg, 500);
-        }
-    }
-
-    
 }
 
 ?>

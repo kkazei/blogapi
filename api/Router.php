@@ -146,17 +146,6 @@
                             ]);
                         }
                         break;
-                   
-                case 'deleteComment':
-                    if (isset($request[1])) {
-                        echo json_encode($post->deleteComment([$request[1]]));
-                    } else {
-                        echo json_encode([
-                            'status' => 400,
-                            'message' => 'Invalid post ID'
-                        ]);
-                    }
-                    break;
             default:
                 echo "Method not available";
                 http_response_code(404);
